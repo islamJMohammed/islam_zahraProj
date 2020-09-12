@@ -10,38 +10,28 @@ class SignInScreen extends Component{
 
     constructor(props) {
         super(props);
-        this.state = { 
-            typing_email:false,
+        this.state = {          
             typing_user:false,
-            typing_pass:false,
-            typing_conPass:false,
+            typing_pass:false,      
             animation_login:new Animated.Value(width-40),
             enable:true,
             isValidUser:true,
             isValidPassword:true
          };
+         
     }
       
     _foucus(value){
       
-            if(value=="email"){
-                this.setState(
-                    {
-                        typing_email:true,
-                        typing_user:false,
-                        typing_pass:false,
-                        typing_conPass:false
-                    }
-                )
-            }
+       
 
-            else  if(value=="user"){
+              if(value=="user"){
                 this.setState(
                     {
-                        typing_email:false,
+                       
                         typing_user:true,
                         typing_pass:false,
-                        typing_conPass:false
+                   
                     
                     }
                 )
@@ -50,25 +40,16 @@ class SignInScreen extends Component{
             else  if(value=="pass"){
                 this.setState(
                     {
-                        typing_email:false,
+                      
                         typing_user:false,
                         typing_pass:true,
-                        typing_conPass:false
+                       
                     
                     }
                 )
             }
 
-            else  if(value=="passC"){
-                this.setState(
-                    {
-                        typing_email:false,
-                        typing_user:false,
-                        typing_pass:false,
-                        typing_conPass:true
-                    }
-                )
-            }
+        
      
     }
 
@@ -94,13 +75,53 @@ class SignInScreen extends Component{
           setTimeout(()=>{
               this.setState({
                   enable:false,
-                  typing_email:false,
                   typing_user:false,
-                  typing_pass:false,
-                  typing_conPass:true
+                  typing_pass:false,                               
               })
           },150);
       }
+
+     validate(text,type){
+        alph=/^[a-zA-Z]+$/
+        num=/^[0-9a-zA-Z]+$/
+       if(type=='username'){
+        if(alph.test(text))
+        {
+          this.setState({
+            isValidUser:true,
+          })
+        }
+        else{
+
+            this.setState({
+                isValidUser:false,
+            })
+        } 
+       }
+       else if(type=='password'){
+        if((num.test(text))&& (text.trim().length >7))
+        {
+          this.setState({
+            isValidPassword:true,
+          })
+        }
+        else{
+
+            this.setState({
+                isValidPassword:false,
+            })
+        }
+       }
+       
+
+
+    }
+  
+    
+
+
+
+
   
     render(){
         const width= this.state.animation_login;
@@ -117,7 +138,7 @@ class SignInScreen extends Component{
            </LinearGradient>
 
            <View style={styles.footer}>
-             <Text style={[styles.title,{marginTop:40}]}>E-mail</Text>
+             <Text style={[styles.title,{marginTop:40}]}>UserName</Text>
              <View style={styles.action}>
               <FontAwesome
                  name="user-o"
@@ -128,20 +149,26 @@ class SignInScreen extends Component{
               />
 
                  <TextInput
-                 placeholder="Enter your email.."
+
+                 placeholder="Enter your UserName.."
                  style={styles.inputText}
-                 onFocus={()=>this._foucus("email")}
+                 onFocus={()=>this._foucus("user")}
+                 onChangeText={(text)=>this.validate(text,'username')}
+                 
                  />
                   {this.state.typing_email ?
                  this._typing()
                   :null }
                  </View>       
+                    
+                    {this.state.isValidUser ? null :  
+                        <Animated.View
+                        animation="fadeInLeft" duration={500}> 
+                    <Text style={styles.ErrMsg}>UserName must be  just character</Text>
+                    </Animated.View>
+                    }
+                
 
-                 <Animated.View
-                   animation="fadeInLeft" duration={500}
-                 > 
-                 <Text style={styles.ErrMsg}>E-mail must follow E-mail formate </Text>
-                 </Animated.View>
                  <Text style={[styles.title,{marginTop:20}]}>Password</Text>
              <View style={styles.action}>
              <FontAwesome
@@ -149,26 +176,27 @@ class SignInScreen extends Component{
                  color="#05345a"
                  size={20}
                  style={{paddingTop:10,paddingEnd:4}}
-                 
-
-
               />
                  <TextInput
                  secureTextEntry
                  placeholder="********"
                  style={styles.inputText}
                  onFocus={()=>this._foucus("pass")}
+                 onChangeText={(text)=>this.validate(text,'password')}
+             
                  />
             {this.state.typing_pass ?
                  this._typing()
                   :null }
             </View>
-    
-        <Animated.View
-            animation="fadeInLeft" duration={500}
-            > 
-            <Text style={styles.ErrMsg}>Password must be 8characters long . </Text>
-            </Animated.View>
+                {this.state.isValidPassword ? null : 
+                    <Animated.View
+                        animation="fadeInLeft" duration={500}
+                        > 
+                        <Text style={styles.ErrMsg}>Password must be 8 long   . </Text>
+                        </Animated.View>
+                 }
+                    
             <View>
                <Text style={{color:'blue' ,fontSize:12,marginTop:10}}>Forgot Password ?</Text>
            </View>
@@ -310,7 +338,7 @@ const width = Dimensions.get('window').width;
          },
          ErrMsg:{
              color:"red",
-             fontSize:14
+             fontSize:10
 
          }
 

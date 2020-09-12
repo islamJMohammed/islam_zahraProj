@@ -12,6 +12,9 @@ class Signup extends Component{
             typing_user:false,
             typing_pass:false,
             typing_conPass:false,
+            isValidUser:true,
+            isValidPassword:true,
+            isValidEmail:true,
             animation_login:new Animated.Value(width-40),
             enable:true
          };
@@ -95,7 +98,58 @@ class Signup extends Component{
               typing_conPass:false
           })
       },150);
+
+
+      
   }
+
+  validate(text,type){
+
+    alph=/^[a-zA-Z]+$/
+    num=/^[0-9a-zA-Z]+$/
+    email=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+   if(type=='username'){
+    if(alph.test(text))
+    {
+      this.setState({
+        isValidUser:true,
+      })
+    }
+    else{
+
+        this.setState({
+            isValidUser:false,
+        })
+    } 
+   }
+   else if(type=='password'){
+    if((num.test(text)) && (text.trim().length >7))
+    {
+      this.setState({
+        isValidPassword:true,
+      })
+    }
+    else{
+
+        this.setState({
+            isValidPassword:false,
+        })
+    }
+   }
+   else  if(type=='email'){
+    if(email.test(text))
+    {
+      this.setState({
+        isValidEmail:true,
+      })
+    }
+    else{
+        this.setState({
+            isValidEmail:false,
+        })
+    } 
+   }
+}
 
     render(){
          const width =  this.state.animation_login;
@@ -130,14 +184,20 @@ class Signup extends Component{
                  placeholder="Enter your name.."
                  style={styles.inputText}
                  onFocus={()=>this._foucus("user")}
+                 onChangeText={(text)=>this.validate(text,'username')}
                  />
                      {this.state.typing_user ?
                  this._typing()
                   :null }
         
                  </View>
-
-
+                 {this.state.isValidUser ? null :  
+                        <Animated.View
+                        animation="fadeInLeft" duration={500}> 
+                    <Text style={styles.ErrMsg}>UserName must be  just character</Text>
+                    </Animated.View>
+                    }
+                 
                  <Text style={[styles.title,{marginTop:20}]}>E-mail</Text>
              <View style={styles.action}>
              <FontAwesome
@@ -148,18 +208,25 @@ class Signup extends Component{
               
               />
 
-                 <TextInput
-                 secureTextEntry
-                 placeholder="Enter your email.."
+                <TextInput
+                 placeholder="Enter your Emial.."
                  style={styles.inputText}
                  onFocus={()=>this._foucus("email")}
+                 onChangeText={(text)=>this.validate(text,'email')}
                  />
                   {this.state.typing_email ?
                  this._typing()
                   :null }
                  </View>
 
-                 
+                 {this.state.isValidEmail ? null : 
+                    <Animated.View
+                        animation="fadeInLeft" duration={500}
+                        > 
+                        <Text style={styles.ErrMsg}>Email must follow Email format. </Text>
+                        </Animated.View>
+                 }
+                    
                  <Text style={[styles.title,{marginTop:20}]}>Password</Text>
              <View style={styles.action}>
                 <FontAwesome
@@ -174,11 +241,21 @@ class Signup extends Component{
                  placeholder="********"
                  style={styles.inputText}
                  onFocus={()=>this._foucus("pass")}
+                 onChangeText={(text)=>this.validate(text,'password')}
                  />
             {this.state.typing_pass ?
                  this._typing()
                   :null }
                  </View>
+
+                 {this.state.isValidPassword ? null : 
+                    <Animated.View
+                        animation="fadeInLeft" duration={500}
+                        > 
+                        <Text style={styles.ErrMsg}>Password must be 8 long  . </Text>
+                        </Animated.View>
+                 }
+                    
 
                  <Text style={[styles.title,{marginTop:20}]}> Confirm Password</Text>
              <View style={styles.action}>
@@ -194,12 +271,22 @@ class Signup extends Component{
                  placeholder="********"
                  style={styles.inputText}
                  onFocus={()=>this._foucus("passC")}
+                 onChangeText={(text)=>this.validate(text,'password')}
                  />
          {this.state.typing_conPass ?
                  this._typing()
                   :null }
                   
                  </View>
+
+                 {this.state.isValidPassword ? null : 
+                    <Animated.View
+                        animation="fadeInLeft" duration={500}
+                        > 
+                        <Text style={styles.ErrMsg}>Password must be 8 long . </Text>
+                        </Animated.View>
+                 }
+                    
                  </ScrollView>
            </View>
            <TouchableOpacity
@@ -320,7 +407,12 @@ const width = Dimensions.get("screen").width;
              color:'white',
              fontWeight:'bold',
              fontSize:18
-         }
+         },
+         ErrMsg:{
+            color:"#ff726f",
+            fontSize:10
+
+        }
 
      } );
 

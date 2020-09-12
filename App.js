@@ -6,7 +6,7 @@ import Signup from "./screens/Signup"
 
 const App = () => {
   return (
-    <SignInScreen/>
+    <Signup/>
   );
 }
 
